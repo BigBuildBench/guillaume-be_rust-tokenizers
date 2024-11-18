@@ -1,0 +1,45 @@
+# rust-tokenizers
+
+Rust-tokenizer is a drop-in replacement for the tokenization methods from the [Transformers library](https://github.com/huggingface/transformers)
+It includes a broad range of tokenizers for state-of-the-art transformers architectures, including:
+- Sentence Piece (unigram model)
+- Sentence Piece (BPE model)
+- BERT
+- ALBERT
+- DistilBERT
+- RoBERTa
+- GPT
+- GPT2
+- ProphetNet
+- CTRL
+- Pegasus
+- MBart50
+- M2M100
+- NLLB
+- DeBERTa
+- DeBERTa (v2)
+
+The wordpiece based tokenizers include both single-threaded and multi-threaded processing. The Byte-Pair-Encoding tokenizers favor the use of a shared cache and are only available as single-threaded tokenizers
+Using the tokenizers requires downloading manually the tokenizers required files (vocabulary or merge files). These can be found in the [Transformers library](https://github.com/huggingface/transformers).
+
+# Usage example
+
+```rust
+use std::path::PathBuf;
+
+use rust_tokenizers::tokenizer::{BertTokenizer, Tokenizer, TruncationStrategy};
+use rust_tokenizers::vocab::{BertVocab, Vocab};
+
+let lowercase: bool = true;
+let strip_accents: bool = true;
+let vocab_path: PathBuf  = PathBuf::from("path/to/vocab");
+let vocab: BertVocab = BertVocab::from_file(&vocab_path)?;
+let test_sentence: Example = Example::new_from_string("This is a sample sentence to be tokenized");
+let bert_tokenizer: BertTokenizer = BertTokenizer::from_existing_vocab(vocab, lowercase, strip_accents);
+
+println!("{:?}", bert_tokenizer.encode(&test_sentence.sentence_1,
+                                       None,
+                                       128,
+                                       &TruncationStrategy::LongestFirst,
+                                       0));
+```

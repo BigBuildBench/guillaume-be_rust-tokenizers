@@ -1,0 +1,66 @@
+matrix:
+  include:
+
+    - language: rust
+      rust: stable
+      os:
+        - linux
+      before_script:
+        - rustup component add rustfmt
+      script:
+        - cargo fmt --manifest-path ./main/Cargo.toml -- --check
+        - cargo fmt --manifest-path ./python-bindings/Cargo.toml -- --check
+
+    - language: rust
+      rust: stable
+      os:
+        - linux
+      before_script:
+        - rustup component add clippy
+      script:
+        - cargo clippy --manifest-path ./main/Cargo.toml --all-targets --all-features  -- -D warnings
+
+    - language: rust
+      rust: stable
+      os:
+        - linux
+      script:
+        - cargo build --manifest-path ./main/Cargo.toml --verbose
+        - cargo test --manifest-path ./main/Cargo.toml
+
+    - language: rust
+      rust: stable
+      os:
+        - windows
+      script:
+        - cargo build --manifest-path ./main/Cargo.toml --verbose
+        - cargo test --manifest-path ./main/Cargo.toml
+
+    - language: rust
+      rust: beta
+      os:
+        - linux
+      script:
+        - cargo build --manifest-path ./main/Cargo.toml --verbose
+        - cargo test --manifest-path ./main/Cargo.toml
+
+    - language: rust
+      rust: nightly
+      os:
+        - linux
+      script:
+        - cargo build --manifest-path ./python-bindings/Cargo.toml --verbose
+
+    - language: python
+      os: linux
+      python: 3.7
+      before_script:
+        - cd python-bindings
+        - bash install_rust.sh
+        - export PATH=$PATH:$HOME/rust/bin:$HOME/.cargo/bin
+        - pip install -r requirements-dev.txt
+        - pip install transformers==3.0.2
+      script:
+        - python setup.py install
+        - pytest ./tests/test_tokenization_sst2.py
+        - pytest ./tests/test_tokenization_qnli.py

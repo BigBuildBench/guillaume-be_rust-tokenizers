@@ -1,0 +1,33 @@
+[package]
+name = "rust_tokenizers"
+version = "8.1.1"
+authors = ["Guillaume Becquin <guillaume.becquin@gmail.com>"]
+edition = "2018"
+description = "High performance tokenizers for Rust"
+repository = "https://github.com/guillaume-be/rust-tokenizers"
+license = "Apache-2.0"
+readme = "README.md"
+build = "build.rs"
+keywords = ["nlp", "machine-learning", "tokenizer"]
+
+[dependencies]
+
+[dev-dependencies]
+tempfile = "3"
+dirs = "5"
+cached-path = { version = "0.6", default-features = false }
+anyhow = "1"
+
+[build-dependencies]
+protobuf-codegen-pure = {version = "2", optional = true}
+
+[features]
+default = ["default-tls"]
+proto-compile = [ "protobuf-codegen-pure" ]
+default-tls = ["cached-path/default-tls"]
+rustls-tls = ["cached-path/rustls-tls"]
+
+[lib]
+name = "rust_tokenizers"
+path = "src/lib.rs"
+crate-type = ["lib"]
